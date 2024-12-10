@@ -15,7 +15,7 @@ jobs:
     - name: Set up PowerShell
       uses: actions/setup-powershell@v1
     - name: Publish Module to PowerShell Gallery
-    - uses: pcgeek86/publish-powershell-module-action@v20
+      uses: pcgeek86/publish-powershell-module-action@v20
       id: publish-module
       with:
           NuGetApiKey: ${{ secrets.PS_GALLERY_KEY }}
