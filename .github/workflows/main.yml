@@ -21,11 +21,13 @@ jobs:
           If ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne 'Trusted') {
               Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
           }
-    - name: Set version and exported packages
+    - name: Publish Module to PowerShell Gallery
       env:
-        PKG_VER: "${{ github.event.release.tag_name }}"
+        PKG_VER: ${{ github.event.release.tag_name }}
+        NUGET_KEY: ${{ secrets.PS_GALLERY_KEY }}
         MANIFEST: ./DevOps.Helper.Functions.psd1
         PUB_FUNC: ./Public
+        MODULE_PATH: ${{ github.workspace }}
       shell: pwsh
       run: |
           $Manifest = (Get-Content -Path $env:MANIFEST -Raw) -replace '0.0.0', $env:PKG_VER
@@ -38,8 +40,7 @@ jobs:
 
           $Manifest = $Manifest -replace "'<FunctionsToExport>'", $FuncToExport
           $Manifest | Set-Content -Path $env:MANIFEST
-    - name: Publish Module to PowerShell Gallery
-      run: Publish-Module -Path ./ -NuGetApiKey $env:NUGET_KEY -Verbose
-      shell: pwsh
-      env:
-          NUGET_KEY: ${{ secrets.PS_GALLERY_KEY }}
+
+          Write-Host $(Get-Content -Path $env:MANIFEST -Raw)
+
+          Publish-Module -Path $env:MODULE_PATH -NuGetApiKey $env:NUGET_KEY -Verbose
