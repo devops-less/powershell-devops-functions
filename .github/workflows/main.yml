@@ -1,0 +1,21 @@
+name: Publish PowerShell Module
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Set up PowerShell
+      uses: actions/setup-powershell@v1
+    - name: Publish Module to PowerShell Gallery
+    - uses: pcgeek86/publish-powershell-module-action@v20
+      id: publish-module
+      with:
+          NuGetApiKey: ${{ secrets.PS_GALLERY_KEY }}
