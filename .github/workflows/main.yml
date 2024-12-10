@@ -2,8 +2,10 @@ name: Publish PowerShell Module
 
 on:
   push:
-    branches:
+    branches: 
       - main
+    paths:
+      - DevOps.Helper.Functions.psd1
 
 jobs:
   publish:
@@ -13,7 +15,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     - name: Publish Module to PowerShell Gallery
-      uses: pcgeek86/publish-powershell-module-action@v20
-      id: publish-module
-      with:
-          NuGetApiKey: ${{ secrets.PS_GALLERY_KEY }}
+      run: |
+          Publish-Module -Path .\ -NuGetApiKey $env:POWERSHELLGALLERY_KEY
+      shell: pwsh
+      env:
+          POWERSHELLGALLERY_KEY: ${{ secrets.PS_GALLERY_KEY }}
