@@ -1,11 +1,8 @@
 name: Publish PowerShell Module
 
 on:
-  push:
-    branches: 
-      - main
-    paths:
-      - DevOps.Helper.Functions.psd1
+  release:
+    types: [published]
 
 jobs:
   publish:
@@ -13,10 +10,29 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+      with:
+        path: DevOps.Helper.Functions
     - name: Publish Module to PowerShell Gallery
-      run: |
-          Publish-Module -Path .\ -NuGetApiKey $env:POWERSHELLGALLERY_KEY
-      shell: pwsh
       env:
-          POWERSHELLGALLERY_KEY: ${{ secrets.PS_GALLERY_KEY }}
+        PKG_VER: ${{ github.event.release.tag_name }}
+        NUGET_KEY: ${{ secrets.PS_GALLERY_KEY }}
+        MANIFEST: ./DevOps.Helper.Functions/DevOps.Helper.Functions.psd1
+        PUB_FUNC: ./DevOps.Helper.Functions/Public
+      shell: pwsh
+      run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+
+          $Manifest = (Get-Content -Path $env:MANIFEST -Raw) -replace '0.0.0', $env:PKG_VER
+          If ((Test-Path -Path $env:PUB_FUNC) -and ($PublicNames = Get-ChildItem -Path $env:PUB_FUNC -Filter '*.ps1' | Select-Object -ExpandProperty BaseName)) {
+              $FuncToExport = "'$($PublicNames -join "','")'"
+          }
+          Else {
+              Write-Host "$env:PUB_FUNC contains no functions"
+              $FuncToExport = $null
+          }
+
+          $Manifest = $Manifest -replace "'<FunctionsToExport>'", $FuncToExport
+          $Manifest | Set-Content -Path $env:MANIFEST
+
+          Publish-Module -Path ./DevOps.Helper.Functions/ -NuGetApiKey $env:NUGET_KEY
