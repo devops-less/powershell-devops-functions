@@ -35,4 +35,4 @@ jobs:
           $Manifest = $Manifest -replace "'<FunctionsToExport>'", $FuncToExport
           $Manifest | Set-Content -Path $env:MANIFEST
 
-          Publish-Module -Path ./DevOps.Helper.Functions/ -NuGetApiKey $env:NUGET_KEY -Verbose
+          Publish-Module -Path ./DevOps.Helper.Functions/ -NuGetApiKey $env:NUGET_KEY
