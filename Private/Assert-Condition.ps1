@@ -10,7 +10,7 @@ function Assert-Condition {
         Write-Log "$Name succeeded." -Level Debug
     }
     Else {
-        Write-Log "$Name failed" -Level Error
-        exit $ExitCode
+        Write-Log "$Name failed (code: $ExitCode)" -Level Error
+        throw "ASSERT::$Name"
     }
 }

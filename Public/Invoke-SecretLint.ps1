@@ -1,6 +1,14 @@
 function Invoke-SecretLint {
-    Write-Log "secret detection..."
+    param(
+        [string]$Path
+    )
     Test-Tool 'npm' -Assert
-    Invoke-ShellCommand "npm install -g secretlint @secretlint/secretlint-rule-preset-recommend" 'secretlint install'
-    Invoke-ShellCommand "secretlint **/*" 'secretlint'
+    Trace-Expression -name 'secretlint install' {
+        Invoke-NodeGlobalInstall 'secretlint'
+        Invoke-NodeGlobalInstall '@secretlint/secretlint-rule-preset-recommend'
+    }
+
+    Trace-Expression -Name 'secret detection' {   
+        Invoke-ShellCommand "secretlint **/*" 'secretlint' -Print -WorkingDirectory $Path
+    }
 }

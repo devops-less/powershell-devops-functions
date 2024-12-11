@@ -4,26 +4,38 @@ function Test-Tool {
         [switch]$Assert
     )
 
-    $oldPreference = $ErrorActionPreference
-    $ErrorActionPreference = 'stop'
-    try {
-        if(Get-Command $ToolName) {
-            Write-Log "$ToolName exists" -Level Debug
-            If (-Not $Assert.IsPresent) {
-                RETURN $true   
+    If ($GlobalCachedToolResults.ContainsKey($ToolName)) {
+        $Result = $GlobalCachedToolResults[$ToolName]
+    }
+    Else {
+        $oldPreference = $ErrorActionPreference
+        $ErrorActionPreference = 'stop'
+        try {
+            if(Get-Command $ToolName) {
+                $Result = $GlobalCachedToolResults[$ToolName] = $true
             }
         }
-    }
-    Catch {
-        Write-Log "$ToolName does not exist" -Level Debug
-        If ($Assert.IsPresent) {
-            Assert-Condition $false "$ToolName exists"
+        Catch {
+            $Result = $GlobalCachedToolResults[$ToolName] = $false
         }
-        Else {
-            RETURN $false
+        Finally {
+            $ErrorActionPreference=$oldPreference
         }
     }
-    Finally {
-        $ErrorActionPreference=$oldPreference
+
+    If ($Result -eq $true) {
+        Write-Log "$ToolName exists" -Level Debug
+    }
+    Else {
+        Write-Log "$ToolName don't exist" -Level Debug
+    }
+
+    If ($Assert.IsPresent) {
+        Assert-Condition $Result  "$ToolName exists"
+    }
+    Else {
+      RETURN $Result  
     }
 }
+
+$GlobalCachedToolResults = @{}

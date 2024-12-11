@@ -3,7 +3,8 @@ function Invoke-ShellCommand {
         [Parameter(Position = 0, Mandatory)][string]$Command,
         [Parameter(Position = 1)][string]$Name = '',
         [string]$WorkingDirectory,
-        [switch]$Result
+        [switch]$Result,
+        [switch]$NoEcho
     )
 
     If ($WorkingDirectory) {
@@ -12,13 +13,26 @@ function Invoke-ShellCommand {
     }
 
     Write-Log "$Command" -Level Debug
-    $Res = iex $Command
-    Assert-Condition ($LASTEXITCODE -eq 0) "$Name" -ExitCode $LASTEXITCODE
-    If ($WorkingDirectory) {
-        Pop-Location
+    Try {
+        $Res = iex $Command
+        Assert-Condition ($LASTEXITCODE -eq 0) "$Name" -ExitCode $LASTEXITCODE
     }
-    If ($Result.IsPresent) {
-        $Value = $Res | Where-Object { $_ } | ForEach-Object { $_.ToString() } | Out-String
-        RETURN $Value
+    Catch {
+        Write-Error $PSItem.ToString()
+        throw $PSItem
     }
+    Finally {
+        If ($WorkingDirectory) {
+            Pop-Location
+        }
+
+        If (($Result.IsPresent -or (-Not $NoEcho.IsPresent)) -and $Res) {
+            $Value = $Res | Where-Object { $_ } | ForEach-Object { $_.ToString() } | Out-String
+            If ($Print.IsPresent) {
+                Write-Log $Value
+            }
+        }
+    }
+
+    RETURN $Value
 }
