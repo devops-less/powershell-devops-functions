@@ -23,9 +23,10 @@ function Write-Log {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0, Mandatory)][string]$Msg,
+        [Parameter(Position = 0)][string]$Msg,
         [LogLevels]$Level = [LogLevels]::Info
     )
+    If ($Msg.Length -ne 0)  {
     If ($Level -eq [LogLevels]::Error) {
         Write-Host $Msg -ForegroundColor Red
     }
@@ -34,6 +35,7 @@ function Write-Log {
     }
     Else {
         Write-Debug $Msg
+    }
     }
 }
 

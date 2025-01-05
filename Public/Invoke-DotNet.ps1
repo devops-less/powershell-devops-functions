@@ -21,14 +21,16 @@ function Invoke-DotNet {
     Test-Tool 'dotnet' -Assert
 
     If ($Restore.IsPresent) {
-        Write-Log "dotnet restore..."
-        $R1 = If ($LockedMode.IsPresent) { ' --locked-mode' } Else { '' }
-        $R2 = If ($LocalPackagesStore) { " --packages $LocalPackagesStore" } Else { '' }
-        Invoke-ShellCommand "dotnet restore $($File)$($R1)$($R2)" 'dotnet restore'
+        Trace-Expression -name 'dotnet restore' {
+            $R1 = If ($LockedMode.IsPresent) { ' --locked-mode' } Else { '' }
+            $R2 = If ($LocalPackagesStore) { " --packages $LocalPackagesStore" } Else { '' }
+            Invoke-ShellCommand "dotnet restore $($File)$($R1)$($R2) " 'dotnet restore'
+        }
     }
     If ($Build.IsPresent) {
-        Write-Log "dotnet build..."
-        Invoke-ShellCommand "dotnet build $($File) --no-restore --nologo -c $Configuration" 'dotnet build'
+        Trace-Expression -name 'dotnet build' {
+            Invoke-ShellCommand "dotnet build $($File) --no-restore --nologo -c $Configuration" 'dotnet build'
+        }
     }
     If ($Publish.IsPresent) {
         Write-Log "dotnet publish..."

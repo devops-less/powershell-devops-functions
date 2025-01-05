@@ -6,7 +6,7 @@ function Trace-Expression {
         [string]$Name
     )
 
-    Write-Log "$Name..."
+    Write-Group $Name
     $Result = $null
     $stopWatch = New-Object -TypeName 'System.Diagnostics.Stopwatch'
     $stopWatch.Start()
@@ -23,10 +23,19 @@ function Trace-Expression {
         }
     }
     Catch {
-        exit 1
+        If ($_.Exception.InnerException.InnerException.ExitCode -is [int]) {
+            exit $_.Exception.InnerException.InnerException.ExitCode
+        }
+        Else {
+            Write-Error $PSItem.ToString()
+            exit 1
+        }
     }
     Finally {
         $stopWatch.Stop()
-        Write-Log "$Name done [$($stopWatch.Elapsed.ToString("s\.ff"))s]"
+        Write-Log "$Name [$($stopWatch.Elapsed.ToString("s\.ff"))s]"
+        Write-Group $Name -End
     }
+
+    RETURN $Result
 }

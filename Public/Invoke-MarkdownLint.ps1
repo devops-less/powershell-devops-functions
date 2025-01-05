@@ -1,10 +1,12 @@
 function Invoke-MarkdownLint {
     param(
+        [string]$Path,
         [string]$Pattern = "**/*.md",
         [string]$Ignore = "**/node_modules/**"
     )
 
-    Write-Log "markdown lint..."
     Test-Tool 'npx' -Assert
-    Invoke-ShellCommand "npx -y markdownlint-cli $Pattern --ignore $Ignore" 'markdownlint'
+    Trace-Expression -Name 'markdown lint' {   
+        Invoke-ShellCommand "npx -y markdownlint-cli $Pattern --ignore $Ignore" 'markdownlint' -WorkingDirectory $Path
+    }
 }

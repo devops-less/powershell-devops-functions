@@ -2,6 +2,7 @@ function Invoke-SecretLint {
     param(
         [string]$Path
     )
+
     Test-Tool 'npm' -Assert
     Trace-Expression -name 'secretlint install' {
         Invoke-NodeGlobalInstall 'secretlint'
@@ -9,6 +10,6 @@ function Invoke-SecretLint {
     }
 
     Trace-Expression -Name 'secret detection' {   
-        Invoke-ShellCommand "secretlint **/*" 'secretlint' -Print -WorkingDirectory $Path
+        Invoke-ShellCommand "secretlint **/*" 'secretlint' -WorkingDirectory $Path
     }
 }

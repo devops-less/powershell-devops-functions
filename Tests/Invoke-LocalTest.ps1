@@ -11,8 +11,13 @@ if (-Not (Get-Module -Name DevOps.Helper.Functions)) {
 Enable-Debug
 
 Invoke-SecretLint -Path "$TestPath"
-Invoke-CSpell -Path "$TestPath"
+# Invoke-CSpell -Path "$TestPath"
+#Invoke-MarkdownLint -Path "$TestPath"
 
 # Test the function
-# Invoke-EcLint -Path "$TestPath"
-# Invoke-EcLint -Path "$TestPath" -GitFilesOnly
+#Invoke-EcLint -Path "$TestPath"
+#Invoke-EcLint -Path "$TestPath" -GitFilesOnly
+
+If (Test-Path "$TestPath") {
+    Invoke-DotNet -Restore -Build -Test -File $TestPath
+}
