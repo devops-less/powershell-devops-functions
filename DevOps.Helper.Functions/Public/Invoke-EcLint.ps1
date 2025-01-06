@@ -12,6 +12,7 @@ function Invoke-EcLint {
     
     $Pattern = If ($GitFilesOnly.IsPresent) { """$((Get-GitFiles -Path $Path) -join '" "')""" } else { '' }
     
-    Write-Log "linting .editorconfig..."
-    Invoke-ShellCommand "npx -y eclint check $Pattern" 'eclint' -WorkingDirectory $Path
+    Trace-Expression -Name 'eclint lint' {   
+        Invoke-ShellCommand "npx -y eclint check $Pattern" 'eclint' -WorkingDirectory $Path
+    }
 }

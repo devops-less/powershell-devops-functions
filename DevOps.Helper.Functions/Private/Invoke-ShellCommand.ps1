@@ -15,7 +15,7 @@ function Invoke-ShellCommand {
 
     Write-Log "$Command" -Level Debug
     Try {
-        $Res = iex $Command 2>&1
+        $Res = iex "$Command 2>&1"
         $ResCode = $LASTEXITCODE
     }
     Finally {

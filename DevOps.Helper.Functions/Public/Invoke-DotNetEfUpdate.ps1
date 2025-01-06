@@ -5,6 +5,7 @@ function Invoke-DotNetEfUpdate {
     )
     Test-Tool 'dotnet' -Assert
     Install-DotNetTool 'dotnet-ef'
-    Write-Log "dotnet ef update..."
-    Invoke-ShellCommand "dotnet ef database update -connection=""$ConnectionString""" 'dotnet ef update' -WorkingDirectory $Folder
+    Trace-Expression -Name 'dotnet ef update' {
+        Invoke-ShellCommand "dotnet ef database update -connection=""$ConnectionString""" 'dotnet ef update' -WorkingDirectory $Folder
+    }
 }
