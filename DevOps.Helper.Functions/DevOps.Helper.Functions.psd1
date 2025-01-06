@@ -30,7 +30,7 @@ CompanyName = 'N/A'
 # Copyright = '2024 DevOps.Helper.Functions by Rosen Kolev'
 
 # Description of the functionality provided by this module
-Description = 'A set of functions to help with DevOps tasks like building applications and tunning tools'
+Description = 'A set of functions to help with DevOps tasks like building applications (.NET, nodejs, etc.), run linting tools, spell checking, and other useful tools. The module have no dependencies.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -104,7 +104,7 @@ PrivateData = @{
         ProjectUri = 'https://github.com/devops-less/powershell-devops-functions'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'https://raw.githubusercontent.com/devops-less/powershell-devops-functions/refs/heads/main/resources/logo.png'
 
         # ReleaseNotes of this module
         ReleaseNotes = '* General Availability of DevOps.Helper.Functions.'

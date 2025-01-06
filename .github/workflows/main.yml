@@ -11,8 +11,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        path: DevOps.Helper.Functions
     - name: Publish Module to PowerShell Gallery
       env:
         PKG_VER: ${{ github.event.release.tag_name }}
